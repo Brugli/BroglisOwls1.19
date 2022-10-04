@@ -1,0 +1,10 @@
+{
+  "type": "broglisowls:entities",
+  "biomes": ["mangrove_swamp","flower_forest","birch_forest","dark_forest","old_growth_birch_forest","old_growth_pine_taiga","old_growth_spruce_taiga","taiga","snowy_taiga","windswept_forest","grove"],
+  "entity": {
+    "type": "broglisowls:entity_owl",
+    "weight": 20,
+    "minCount": 2,
+    "maxCount": 3
+  }
+}
