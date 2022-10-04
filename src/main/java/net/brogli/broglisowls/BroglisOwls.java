@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import net.brogli.broglisowls.entity.BroglisOwlsEntityTypes;
 import net.brogli.broglisowls.item.BroglisOwlsItems;
 import net.brogli.broglisowls.sound.BroglisOwlsSounds;
+import net.brogli.broglisowls.world.biomemods.BroglisOwlsBiomeModifiers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -48,6 +49,7 @@ public class BroglisOwls
         BroglisOwlsEntityTypes.register(eventBus);
         BroglisOwlsItems.register(eventBus);
         BroglisOwlsSounds.register(eventBus);
+        BroglisOwlsBiomeModifiers.register(eventBus);
 
         eventBus.addListener(this::setup);
 
@@ -61,6 +63,11 @@ public class BroglisOwls
 
     private void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
+
+            SpawnPlacements.register(BroglisOwlsEntityTypes.ENTITY_OWL.get(),
+                    SpawnPlacements.Type.ON_GROUND,
+                    Heightmap.Types.MOTION_BLOCKING,
+                    Animal::checkAnimalSpawnRules);
         });
     }
 
