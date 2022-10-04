@@ -102,22 +102,22 @@ public class EntityBabyOwl extends Animal implements IAnimatable {
         this.goalSelector.addGoal(30, new EntityBabyOwl.BabyOwlWanderGoal(this, 1.0D));
     }
 
-    protected PathNavigation createNavigation(Level p_29417_) {
-        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, p_29417_);
+    protected PathNavigation createNavigation(Level level) {
+        FlyingPathNavigation flyingpathnavigation = new FlyingPathNavigation(this, level);
         flyingpathnavigation.setCanOpenDoors(false);
         flyingpathnavigation.setCanFloat(true);
         flyingpathnavigation.setCanPassDoors(true);
         return flyingpathnavigation;
     }
 
-    public void addAdditionalSaveData(CompoundTag p_218709_) {
-        super.addAdditionalSaveData(p_218709_);
-        p_218709_.putInt("Age", this.age);
+    public void addAdditionalSaveData(CompoundTag tag) {
+        super.addAdditionalSaveData(tag);
+        tag.putInt("Age", this.age);
     }
 
-    public void readAdditionalSaveData(CompoundTag p_218698_) {
-        super.readAdditionalSaveData(p_218698_);
-        this.setAge(p_218698_.getInt("Age"));
+    public void readAdditionalSaveData(CompoundTag tag) {
+        super.readAdditionalSaveData(tag);
+        this.setAge(tag.getInt("Age"));
     }
 
     public void aiStep() {
@@ -187,15 +187,15 @@ public class EntityBabyOwl extends Animal implements IAnimatable {
     }
 
 
-    private void feed(Player p_218691_, ItemStack p_218692_) {
-        this.usePlayerItem(p_218691_, p_218692_);
+    private void feed(Player player, ItemStack stack) {
+        this.usePlayerItem(player, stack);
         this.ageUp(AgeableMob.getSpeedUpSecondsWhenFeeding(this.getTicksLeftUntilAdult()));
         this.level.addParticle(ParticleTypes.HAPPY_VILLAGER, this.getRandomX(1.0D), this.getRandomY() + 0.5D, this.getRandomZ(1.0D), 0.0D, 0.0D, 0.0D);
     }
 
-    private void usePlayerItem(Player p_218706_, ItemStack p_218707_) {
-        if (!p_218706_.getAbilities().instabuild) {
-            p_218707_.shrink(1);
+    private void usePlayerItem(Player player, ItemStack stack) {
+        if (!player.getAbilities().instabuild) {
+            stack.shrink(1);
         }
 
     }
@@ -301,18 +301,18 @@ public class EntityBabyOwl extends Animal implements IAnimatable {
         this.shakeAnimO = 0.0F;
     }
 
-    public void die(DamageSource p_30384_) {
+    public void die(DamageSource source) {
         this.isWet = false;
         this.isShaking = false;
         this.shakeAnimO = 0.0F;
         this.shakeAnim = 0.0F;
-        super.die(p_30384_);
+        super.die(source);
     }
 
-    public boolean doHurtTarget(Entity p_30372_) {
-        boolean flag = p_30372_.hurt(DamageSource.mobAttack(this), (float)((int)this.getAttributeValue(Attributes.ATTACK_DAMAGE)));
+    public boolean doHurtTarget(Entity entity) {
+        boolean flag = entity.hurt(DamageSource.mobAttack(this), (float)((int)this.getAttributeValue(Attributes.ATTACK_DAMAGE)));
         if (flag) {
-            this.doEnchantDamageEffects(this, p_30372_);
+            this.doEnchantDamageEffects(this, entity);
         }
 
         return flag;

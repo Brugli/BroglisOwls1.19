@@ -258,10 +258,10 @@ public class EntityOwl extends Animal implements IAnimatable {
         super.die(p_30384_);
     }
 
-    public boolean doHurtTarget(Entity p_30372_) {
-        boolean flag = p_30372_.hurt(DamageSource.mobAttack(this), (float)((int)this.getAttributeValue(Attributes.ATTACK_DAMAGE)));
+    public boolean doHurtTarget(Entity entity) {
+        boolean flag = entity.hurt(DamageSource.mobAttack(this), (float)((int)this.getAttributeValue(Attributes.ATTACK_DAMAGE)));
         if (flag) {
-            this.doEnchantDamageEffects(this, p_30372_);
+            this.doEnchantDamageEffects(this, entity);
         }
 
         return flag;
