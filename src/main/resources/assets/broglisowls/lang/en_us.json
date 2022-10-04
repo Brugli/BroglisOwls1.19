@@ -1,0 +1,11 @@
+{
+  "item.broglisowls.item_owl_egg": "Owl Egg",
+
+  "entity.broglisowls.entity_owl": "Owl" ,
+  "entity.broglisowls.entity_baby_owl": "Baby Owl" ,
+
+  "sounds.broglisowls.owl_ambient_1": "Owl Hooting",
+  "sounds.broglisowls.owl_ambient_2": "Owl Hooting",
+  "sounds.broglisowls.baby_owl_ambient_1": "Baby Owl Screeching",
+  "sounds.broglisowls.baby_owl_ambient_2": "Baby Owl Screeching"
+}

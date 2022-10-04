@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "broglisowls:item/item_owl_egg"
+  }
+}
