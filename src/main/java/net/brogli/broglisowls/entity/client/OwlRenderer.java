@@ -3,7 +3,7 @@ package net.brogli.broglisowls.entity.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.brogli.broglisowls.BroglisOwls;
-import net.brogli.broglisowls.entity.custom.EntityOwl;
+import net.brogli.broglisowls.entity.custom.Owl;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -13,28 +13,28 @@ import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
-public class EntityOwlRenderer extends GeoEntityRenderer<EntityOwl> {
+public class OwlRenderer extends GeoEntityRenderer<Owl> {
 
-    public EntityOwlRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new EntityOwlModel());
+    public OwlRenderer(EntityRendererProvider.Context renderManager) {
+        super(renderManager, new OwlModel());
         this.addLayer(new GlowingOwlEyesLayer(this));
         this.shadowRadius = 0.5f;
     }
 
     @Override
-    public ResourceLocation getTextureLocation(EntityOwl object) {
+    public ResourceLocation getTextureLocation(Owl owl) {
         return new ResourceLocation(BroglisOwls.MOD_ID, "textures/angry_owl.png");
     }
 
     @Override
-    public RenderType getRenderType(EntityOwl animatable, float partialTicks, PoseStack stack,
+    public RenderType getRenderType(Owl animatable, float partialTicks, PoseStack stack,
                                     MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
                                     ResourceLocation textureLocation) {
         stack.scale(0.8F, 0.8F, 0.8F);
         return super.getRenderType(animatable, partialTicks, stack, renderTypeBuffer, vertexBuilder, packedLightIn, textureLocation);
     }
 
-    public static class GlowingOwlEyesLayer<T extends EntityOwl> extends GeoLayerRenderer<T> {
+    public static class GlowingOwlEyesLayer<T extends Owl> extends GeoLayerRenderer<T> {
 
         private final ResourceLocation GLOWING_EYES;
 
@@ -42,7 +42,7 @@ public class EntityOwlRenderer extends GeoEntityRenderer<EntityOwl> {
 
         public GlowingOwlEyesLayer(IGeoRenderer<T> entityRendererIn) {
             super(entityRendererIn);
-            GLOWING_EYES = new ResourceLocation(BroglisOwls.MOD_ID,"textures/angry_owl_glow.png");
+            GLOWING_EYES = new ResourceLocation(BroglisOwls.MOD_ID, "textures/angry_owl_glow.png");
             OWL_MODEL = new ResourceLocation(BroglisOwls.MOD_ID, "geo/entity_owl.geo.json");
         }
 
