@@ -21,13 +21,11 @@ import software.bernie.geckolib3.GeckoLib;
 
 
 @Mod(BroglisOwls.MOD_ID)
-public class BroglisOwls
-{
+public class BroglisOwls {
     public static final String MOD_ID = "broglisowls";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public BroglisOwls()
-    {
+    public BroglisOwls() {
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         BroglisOwlsEntityTypes.register(eventBus);
         BroglisOwlsItems.register(eventBus);
@@ -47,7 +45,7 @@ public class BroglisOwls
     private void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
 
-            SpawnPlacements.register(BroglisOwlsEntityTypes.ENTITY_OWL.get(),
+            SpawnPlacements.register(BroglisOwlsEntityTypes.OWL_ENTITY_TYPE.get(),
                     SpawnPlacements.Type.ON_GROUND,
                     Heightmap.Types.MOTION_BLOCKING,
                     Animal::checkAnimalSpawnRules);
