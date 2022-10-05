@@ -1,33 +1,33 @@
 package net.brogli.broglisowls.entity.client;
 
 import net.brogli.broglisowls.BroglisOwls;
-import net.brogli.broglisowls.entity.custom.EntityBabyOwl;
+import net.brogli.broglisowls.entity.custom.Owl;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
-public class EntityBabyOwlModel extends AnimatedGeoModel<EntityBabyOwl> {
+public class OwlModel extends AnimatedGeoModel<Owl> {
 
     @Override
-    public ResourceLocation getModelResource(EntityBabyOwl object) {
+    public ResourceLocation getModelResource(Owl owl) {
         return new ResourceLocation(BroglisOwls.MOD_ID, "geo/entity_baby_owl.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(EntityBabyOwl object) {
+    public ResourceLocation getTextureResource(Owl owl) {
         return new ResourceLocation(BroglisOwls.MOD_ID, "textures/baby_owl.png");
     }
 
     @Override
-    public ResourceLocation getAnimationResource(EntityBabyOwl animatable) {
+    public ResourceLocation getAnimationResource(Owl animatable) {
         return new ResourceLocation(BroglisOwls.MOD_ID, "animations/entity_baby_owl.animation.json");
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public void setLivingAnimations(EntityBabyOwl entity, Integer uniqueID, AnimationEvent customPredicate) {
+    public void setLivingAnimations(Owl entity, Integer uniqueID, AnimationEvent customPredicate) {
         super.setLivingAnimations(entity, uniqueID, customPredicate);
         IBone head = this.getAnimationProcessor().getBone("Head");
 
