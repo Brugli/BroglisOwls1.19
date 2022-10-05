@@ -2,7 +2,6 @@ package net.brogli.broglisowls.entity.client;
 
 import net.brogli.broglisowls.BroglisOwls;
 import net.brogli.broglisowls.entity.custom.EntityBabyOwl;
-import net.brogli.broglisowls.entity.custom.EntityOwl;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;

@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.brogli.broglisowls.BroglisOwls;
 import net.brogli.broglisowls.entity.custom.EntityBabyOwl;
-import net.brogli.broglisowls.entity.custom.EntityOwl;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;

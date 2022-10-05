@@ -3,7 +3,6 @@ package net.brogli.broglisowls.item;
 import net.brogli.broglisowls.BroglisOwls;
 import net.brogli.broglisowls.item.custom.ItemOwlEgg;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.EggItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
