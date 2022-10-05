@@ -23,7 +23,7 @@ public class OwlRenderer extends GeoEntityRenderer<Owl> {
 
     @Override
     public ResourceLocation getTextureLocation(Owl owl) {
-        return new ResourceLocation(BroglisOwls.MOD_ID, "textures/angry_owl.png");
+        return owl.isBaby() ? new ResourceLocation(BroglisOwls.MOD_ID, "textures/baby_owl.png") : new ResourceLocation(BroglisOwls.MOD_ID, "textures/angry_owl.png");
     }
 
     @Override
@@ -34,23 +34,26 @@ public class OwlRenderer extends GeoEntityRenderer<Owl> {
         return super.getRenderType(animatable, partialTicks, stack, renderTypeBuffer, vertexBuilder, packedLightIn, textureLocation);
     }
 
-    public static class GlowingOwlEyesLayer<T extends Owl> extends GeoLayerRenderer<T> {
+    public static class GlowingOwlEyesLayer extends GeoLayerRenderer<Owl> {
 
-        private final ResourceLocation GLOWING_EYES;
-
-        private final ResourceLocation OWL_MODEL;
-
-        public GlowingOwlEyesLayer(IGeoRenderer<T> entityRendererIn) {
+        public GlowingOwlEyesLayer(IGeoRenderer<Owl> entityRendererIn) {
             super(entityRendererIn);
-            GLOWING_EYES = new ResourceLocation(BroglisOwls.MOD_ID, "textures/angry_owl_glow.png");
-            OWL_MODEL = new ResourceLocation(BroglisOwls.MOD_ID, "geo/entity_owl.geo.json");
         }
 
         @Override
-        public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+        public void render(PoseStack matrixStack, MultiBufferSource buffer, int packedLightIn, Owl owl, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
 
-            this.getRenderer().render(getEntityModel().getModel(OWL_MODEL), entity, partialTicks, RenderType.entityTranslucentEmissive(GLOWING_EYES), matrixStack, buffer,
-                    buffer.getBuffer(RenderType.entityTranslucentEmissive(GLOWING_EYES)), packedLightIn, OverlayTexture.pack(0, OverlayTexture.v(entity.level.isNight())), 1f, 1f, 1f, 1f);
+            this.getRenderer().render(
+                    getEntityModel().getModel(owl.isBaby() ? OwlModel.BABY_OWL_GEO : OwlModel.OWL_GEO),
+                    owl,
+                    partialTicks,
+                    RenderType.entityTranslucentEmissive(owl.isBaby() ? OwlModel.BABY_OWL_EYES : OwlModel.OWL_EYES),
+                    matrixStack,
+                    buffer,
+                    buffer.getBuffer(RenderType.entityTranslucentEmissive(owl.isBaby() ? OwlModel.BABY_OWL_EYES : OwlModel.OWL_EYES)),
+                    packedLightIn,
+                    OverlayTexture.pack(0, OverlayTexture.v(owl.level.isNight())),
+                    1f, 1f, 1f, 1f);
         }
     }
 }
