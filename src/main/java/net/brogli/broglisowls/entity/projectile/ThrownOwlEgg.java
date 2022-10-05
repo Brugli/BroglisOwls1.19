@@ -1,7 +1,7 @@
 package net.brogli.broglisowls.entity.projectile;
 
 import net.brogli.broglisowls.entity.BroglisOwlsEntityTypes;
-import net.brogli.broglisowls.entity.custom.EntityBabyOwl;
+import net.brogli.broglisowls.entity.custom.Owl;
 import net.brogli.broglisowls.item.BroglisOwlsItems;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -25,15 +25,14 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
     }
 
     @Override
-    public void handleEntityEvent(byte b) {
-        if (b == 3) {
-            double d0 = 0.08D;
+    public void handleEntityEvent(byte eventIdentifier) {
+        if (eventIdentifier == 3)
+            for (int i = 0; i < 8; ++i)
+                this.level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, this.getItem()), this.getX(), this.getY(), this.getZ(), randomXYZPos(), randomXYZPos(), randomXYZPos());
+    }
 
-            for(int i = 0; i < 8; ++i) {
-                this.level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, this.getItem()), this.getX(), this.getY(), this.getZ(), ((double)this.random.nextFloat() - 0.5D) * 0.08D, ((double)this.random.nextFloat() - 0.5D) * 0.08D, ((double)this.random.nextFloat() - 0.5D) * 0.08D);
-            }
-        }
-
+    private double randomXYZPos() {
+        return (this.random.nextDouble() - 0.5D) * 0.08D;
     }
 
     @Override
@@ -45,24 +44,19 @@ public class ThrownOwlEgg extends ThrowableItemProjectile {
     @Override
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
-        if (!this.level.isClientSide) {
-            if (this.random.nextInt(8) == 0) {
-                int i = 1;
-                if (this.random.nextInt(32) == 0) {
-                    i = 4;
-                }
+        if (!this.level.isClientSide && this.random.nextInt(8) == 0) {
+            int owlsToSpawn = this.random.nextInt(32) == 0 ? 4 : 1;
 
-                for(int j = 0; j < i; ++j) {
-                    EntityBabyOwl babyOwl = BroglisOwlsEntityTypes.ENTITY_BABY_OWL.get().create(this.level);
-                    babyOwl.setAge(-24000);
-                    babyOwl.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
-                    this.level.addFreshEntity(babyOwl);
-                }
+            for (int j = 0; j < owlsToSpawn; ++j) {
+                Owl owl = BroglisOwlsEntityTypes.OWL_ENTITY_TYPE.get().create(this.level);
+                owl.setBaby(true);
+                owl.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), 0.0F);
+                this.level.addFreshEntity(owl);
             }
-
-            this.level.broadcastEntityEvent(this, (byte)3);
-            this.discard();
         }
+
+        this.level.broadcastEntityEvent(this, (byte) 3);
+        this.discard();
 
     }
 
