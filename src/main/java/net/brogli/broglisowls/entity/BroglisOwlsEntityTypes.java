@@ -16,7 +16,6 @@ public class BroglisOwlsEntityTypes {
 
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES =
             DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, BroglisOwls.MOD_ID);
-    //TODO baby =s 0.6 / 0.8
     public static final RegistryObject<EntityType<Owl>> OWL_ENTITY_TYPE =
             ENTITY_TYPES.register("entity_owl",
                     () -> EntityType.Builder.of(Owl::new, MobCategory.CREATURE)

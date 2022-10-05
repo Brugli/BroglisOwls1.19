@@ -15,6 +15,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
@@ -43,6 +45,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
+import java.util.UUID;
 import java.util.function.Predicate;
 
 public class Owl extends Animal implements IAnimatable {
@@ -76,15 +79,20 @@ public class Owl extends Animal implements IAnimatable {
         this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, -1.0F);
     }
 
+    private static final UUID SPEED_MODIFIER_BABY_UUID = UUID.fromString("cc46a8de-a578-4193-901f-42a3a882094a");
+    private static final UUID FLY_MODIFIER_BABY_UUID = UUID.fromString("7b243d6f-78fd-4bfd-bc1a-8148683cc91e");
+    private static final UUID ATK_MODIFIER_BABY_UUID = UUID.fromString("3425f101-4799-4905-8a5c-320f9fe6854e");
+
+    private static final AttributeModifier SPEED_MODIFIER_BABY = new AttributeModifier(SPEED_MODIFIER_BABY_UUID, "slow baby move", -0.03D, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier FLY_MODIFIER_BABY = new AttributeModifier(FLY_MODIFIER_BABY_UUID, "slow baby fly", -0.1D, AttributeModifier.Operation.ADDITION);
+    private static final AttributeModifier ATK_MODIFIER_BABY = new AttributeModifier(ATK_MODIFIER_BABY_UUID, "soft baby atk", -1.0D, AttributeModifier.Operation.ADDITION);
+
     public static AttributeSupplier setAttributes() {
         return Animal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 10.0D)
                 .add(Attributes.FLYING_SPEED, (double) 0.5F)
-                //TODO baby = 0.4f
                 .add(Attributes.MOVEMENT_SPEED, (double) 0.2F)
-                //TODO baby = 0.17f
                 .add(Attributes.ATTACK_DAMAGE, 2.0D)
-                //TODO baby os 1.0
                 .add(Attributes.FOLLOW_RANGE, 32.0D).build();
     }
 
@@ -99,6 +107,26 @@ public class Owl extends Animal implements IAnimatable {
         this.targetSelector.addGoal(10, new NearestAttackableTargetGoal<>(this, Animal.class, false, PREY_SELECTOR));
         this.goalSelector.addGoal(15, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(30, new OwlWanderGoal(this, 1.0D));
+    }
+
+    @Override
+    public void setBaby(boolean isBaby) {
+        super.setBaby(isBaby);
+        if (this.level != null && !this.level.isClientSide) {
+            AttributeInstance movement = this.getAttribute(Attributes.MOVEMENT_SPEED);
+            AttributeInstance fly = this.getAttribute(Attributes.FLYING_SPEED);
+            AttributeInstance atk = this.getAttribute(Attributes.ATTACK_DAMAGE);
+
+            movement.removeModifier(SPEED_MODIFIER_BABY);
+            fly.removeModifier(FLY_MODIFIER_BABY);
+            atk.removeModifier(ATK_MODIFIER_BABY);
+            if (isBaby) {
+                movement.addTransientModifier(SPEED_MODIFIER_BABY);
+                fly.addTransientModifier(FLY_MODIFIER_BABY);
+                atk.addTransientModifier(ATK_MODIFIER_BABY);
+            }
+        }
+
     }
 
     protected PathNavigation createNavigation(Level level) {
@@ -368,5 +396,13 @@ public class Owl extends Animal implements IAnimatable {
 
             return null;
         }
+    }
+
+    @Override
+    public EntityDimensions getDimensions(Pose p_21047_) {
+        EntityDimensions dim = this.getType().getDimensions();
+        if (this.isBaby())
+            dim = EntityDimensions.fixed(0.6F, 0.8F);
+        return dim;
     }
 }
