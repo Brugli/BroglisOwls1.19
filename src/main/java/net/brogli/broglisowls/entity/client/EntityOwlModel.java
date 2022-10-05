@@ -33,8 +33,13 @@ public class EntityOwlModel extends AnimatedGeoModel<EntityOwl> {
 
         EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
         if (head != null) {
-            head.setRotationX(extraData.headPitch * ((float) Math.PI / 270F));
-            head.setRotationY(extraData.netHeadYaw * ((float) Math.PI / 100F));
+            if (entity.isFlying()) {
+                head.setRotationX(extraData.headPitch * ((float) Math.PI / 270F));
+                head.setRotationY(extraData.netHeadYaw * ((float) Math.PI / 300F));
+            } else {
+                head.setRotationX(extraData.headPitch * ((float) Math.PI / 270F));
+                head.setRotationY(extraData.netHeadYaw * ((float) Math.PI / 100F));
+            }
         }
     }
 }

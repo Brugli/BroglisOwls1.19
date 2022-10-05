@@ -143,7 +143,7 @@ public class EntityOwl extends Animal implements IAnimatable {
         }
 
         if (this.level.random.nextInt(400) == 0) {
-            this.playSound(BroglisOwlsSounds.OWL_AMBIENT_1.get(), 1.7F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+            this.playSound(BroglisOwlsSounds.OWL_AMBIENT_1.get(), 1.5F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
         }
 
         if (!this.level.isClientSide && this.isAlive() && --this.eggTime <= 0) {
