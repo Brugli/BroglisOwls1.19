@@ -14,6 +14,7 @@ public class OwlModel extends AnimatedGeoModel<Owl> {
     public static final ResourceLocation OWL_TEX = new ResourceLocation(BroglisOwls.MOD_ID, "textures/angry_owl.png");
     public static final ResourceLocation BABY_OWL_TEX = new ResourceLocation(BroglisOwls.MOD_ID, "textures/baby_owl.png");
     public static final ResourceLocation OWL_ANIM = new ResourceLocation(BroglisOwls.MOD_ID, "animations/entity_owl.animation.json");
+    public static final ResourceLocation BABY_OWL_ANIM = new ResourceLocation(BroglisOwls.MOD_ID, "animations/entity_baby_owl.animation.json");
     public static final ResourceLocation OWL_EYES = new ResourceLocation(BroglisOwls.MOD_ID, "textures/angry_owl_glow.png");
     public static final ResourceLocation BABY_OWL_EYES = new ResourceLocation(BroglisOwls.MOD_ID, "textures/baby_owl_glow.png");
 
@@ -29,7 +30,7 @@ public class OwlModel extends AnimatedGeoModel<Owl> {
 
     @Override
     public ResourceLocation getAnimationResource(Owl owl) {
-        return OWL_ANIM;
+        return owl.isBaby() ? BABY_OWL_ANIM : OWL_ANIM;
     }
 
     @Override

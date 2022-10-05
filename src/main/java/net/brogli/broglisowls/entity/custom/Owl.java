@@ -333,19 +333,38 @@ public class Owl extends Animal implements IAnimatable {
     }
 
     private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        if (this.isShaking) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_owl.ruffle", false));
+        if (!this.isBaby()) {
+            if (this.isShaking) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_owl.ruffle", false));
+                return PlayState.CONTINUE;
+            }
+            if (this.onGround && event.isMoving()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_owl.walk", true));
+                return PlayState.CONTINUE;
+            }
+            if (this.isFlying()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_owl.flight", true));
+                return PlayState.CONTINUE;
+            }
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_owl.idle", true));
             return PlayState.CONTINUE;
         }
-        if (this.onGround && event.isMoving()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_owl.walk", true));
+        if (this.isBaby()) {
+            if (this.isShaking) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_baby_owl.ruffle", false));
+                return PlayState.CONTINUE;
+            }
+            if (this.onGround && event.isMoving()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_baby_owl.walk", true));
+                return PlayState.CONTINUE;
+            }
+            if (this.isFlying()) {
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_baby_owl.flight", true));
+                return PlayState.CONTINUE;
+            }
+            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_baby_owl.idle", true));
             return PlayState.CONTINUE;
         }
-        if (this.isFlying()) {
-            event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_owl.flight", true));
-            return PlayState.CONTINUE;
-        }
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.entity_owl.idle", true));
         return PlayState.CONTINUE;
     }
 
