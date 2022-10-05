@@ -204,7 +204,7 @@ public class Owl extends Animal implements IAnimatable {
     }
 
     public boolean canBreed() {
-        return false;
+        return !isBaby();
     }
 
     private void calculateFlapping() {
