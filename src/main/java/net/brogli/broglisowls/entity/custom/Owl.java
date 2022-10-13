@@ -7,10 +7,15 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.TimeUtil;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -21,12 +26,17 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.FlyingMoveControl;
 import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.ResetUniversalAngerTargetGoal;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.util.LandRandomPos;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -48,7 +58,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class Owl extends Animal implements IAnimatable {
+public class Owl extends Animal implements IAnimatable, NeutralMob {
 
     private final AnimationFactory factory = new AnimationFactory(this);
 
@@ -65,6 +75,13 @@ public class Owl extends Animal implements IAnimatable {
         EntityType<?> entitytype = entity.getType();
         return entitytype == EntityType.RABBIT;
     };
+
+    private static final EntityDataAccessor<Integer> DATA_REMAINING_ANGER_TIME = SynchedEntityData.defineId(Owl.class, EntityDataSerializers.INT);
+
+    private static final UniformInt PERSISTENT_ANGER_TIME = TimeUtil.rangeOfSeconds(20, 39);
+
+    @javax.annotation.Nullable
+    private UUID persistentAngerTarget;
 
     private float shakeAnim;
     private float shakeAnimO;
@@ -102,11 +119,19 @@ public class Owl extends Animal implements IAnimatable {
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0D));
         this.goalSelector.addGoal(2, new TemptGoal(this, 1.25D, Ingredient.of(Items.RABBIT), false));
         this.goalSelector.addGoal(2, new FollowParentGoal(this, 1.25D));
+        this.targetSelector.addGoal(3, (new HurtByTargetGoal(this)).setAlertOthers());
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, this::isAngryAt));
         this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.0D, true));
         this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 32.0F));
+        this.targetSelector.addGoal(8, new ResetUniversalAngerTargetGoal<>(this, true));
         this.targetSelector.addGoal(10, new NearestAttackableTargetGoal<>(this, Animal.class, false, PREY_SELECTOR));
         this.goalSelector.addGoal(15, new RandomLookAroundGoal(this));
         this.goalSelector.addGoal(30, new OwlWanderGoal(this, 1.0D));
+    }
+
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(DATA_REMAINING_ANGER_TIME, 0);
     }
 
     @Override
@@ -141,6 +166,7 @@ public class Owl extends Animal implements IAnimatable {
         super.addAdditionalSaveData(tag);
         tag.putInt("age", this.age);
         tag.putInt("eggLayTime", this.eggTime);
+        this.addPersistentAngerSaveData(tag);
     }
 
     public void readAdditionalSaveData(CompoundTag tag) {
@@ -149,6 +175,7 @@ public class Owl extends Animal implements IAnimatable {
         if (tag.contains("eggLayTime")) {
             this.eggTime = tag.getInt("eggLayTime");
         }
+        this.readPersistentAngerSaveData(this.level, tag);
     }
 
     public void aiStep() {
@@ -169,6 +196,10 @@ public class Owl extends Animal implements IAnimatable {
             this.spawnAtLocation(BroglisOwlsItems.ITEM_OWL_EGG.get());
             this.gameEvent(GameEvent.ENTITY_PLACE);
             this.eggTime = this.random.nextInt(6000) + 6000;
+        }
+
+        if (!this.level.isClientSide) {
+            this.updatePersistentAnger((ServerLevel)this.level, true);
         }
         super.aiStep();
         this.calculateFlapping();
@@ -304,6 +335,20 @@ public class Owl extends Animal implements IAnimatable {
         super.die(source);
     }
 
+    public boolean hurt(DamageSource p_30386_, float p_30387_) {
+        if (this.isInvulnerableTo(p_30386_)) {
+            return false;
+        } else {
+            Entity entity = p_30386_.getEntity();
+
+            if (entity != null && !(entity instanceof Player) && !(entity instanceof AbstractArrow)) {
+                p_30387_ = (p_30387_ + 1.0F) / 2.0F;
+            }
+
+            return super.hurt(p_30386_, p_30387_);
+        }
+    }
+
     public boolean doHurtTarget(Entity entity) {
         boolean flag = entity.hurt(DamageSource.mobAttack(this), (float) ((int) this.getAttributeValue(Attributes.ATTACK_DAMAGE)));
         if (flag) {
@@ -376,6 +421,32 @@ public class Owl extends Animal implements IAnimatable {
     @Override
     public AnimationFactory getFactory() {
         return this.factory;
+    }
+
+    @Override
+    public int getRemainingPersistentAngerTime() {
+//        return 0;
+        return this.entityData.get(DATA_REMAINING_ANGER_TIME);
+    }
+
+
+    @Override
+    public void setRemainingPersistentAngerTime(int i) {
+        this.entityData.set(DATA_REMAINING_ANGER_TIME, i);
+    }
+
+    @Override
+    public void startPersistentAngerTimer() {
+        this.setRemainingPersistentAngerTime(PERSISTENT_ANGER_TIME.sample(this.random));
+    }
+
+    @javax.annotation.Nullable
+    public UUID getPersistentAngerTarget() {
+        return this.persistentAngerTarget;
+    }
+
+    public void setPersistentAngerTarget(@javax.annotation.Nullable UUID uuid) {
+        this.persistentAngerTarget = uuid;
     }
 
     static class OwlWanderGoal extends WaterAvoidingRandomFlyingGoal {
