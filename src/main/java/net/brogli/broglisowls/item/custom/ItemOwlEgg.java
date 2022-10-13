@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level;
 
 public class ItemOwlEgg extends Item {
     public ItemOwlEgg() {
-        super(new Item.Properties().stacksTo(16).tab(CreativeModeTab.TAB_MATERIALS));
+        super(new Item.Properties().stacksTo(16).tab(CreativeModeTab.TAB_MISC));
     }
 
     @Override
