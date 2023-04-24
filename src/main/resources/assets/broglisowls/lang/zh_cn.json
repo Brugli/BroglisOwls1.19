@@ -1,0 +1,11 @@
+{
+  "item.broglisowls.item_owl_egg": "猫头鹰蛋",
+
+  "entity.broglisowls.entity_owl": "猫头鹰" ,
+  "entity.broglisowls.entity_baby_owl": "猫头鹰幼崽" ,
+
+  "sounds.broglisowls.owl_ambient_1": "猫头鹰：咕咕",
+  "sounds.broglisowls.owl_ambient_2": "猫头鹰：咕咕",
+  "sounds.broglisowls.baby_owl_ambient_1": "猫头鹰幼崽尖叫",
+  "sounds.broglisowls.baby_owl_ambient_2": "猫头鹰幼崽尖叫"
+}
